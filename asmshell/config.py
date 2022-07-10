@@ -28,8 +28,6 @@ class Config(metaclass=Singleton):
     emu_base : int = dataclasses.field(default=0x0)
     emu_mem_size : int = dataclasses.field(default=0x1000 * 0x1000) # 1 MiB
 
-    #emu_code_size : int = dataclasses.field(default=2 * 0x1000 * 0x1000) # 2MiB (0x2000000)
-
     def init_keystone(self):
         self.ks = keystone.Ks(self.asm_arch, self.asm_mode)
         self.ks.syntax = self.asm_syntax
