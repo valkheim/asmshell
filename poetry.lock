@@ -1,0 +1,24 @@
+[[package]]
+name = "keystone-engine"
+version = "0.9.2"
+description = "Keystone assembler engine"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "unicorn"
+version = "2.0.0"
+description = "Unicorn CPU emulator engine"
+category = "main"
+optional = false
+python-versions = "*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.10"
+content-hash = "70f4ce35507280b4ece81d8a16df7af9adced2c4e2a82413b1a8297d7335b470"
+
+[metadata.files]
+keystone-engine = []
+unicorn = []
