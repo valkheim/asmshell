@@ -1,7 +1,14 @@
+import os
+
 import unicorn.x86_const
 
 from . import typing, utils
 from .config import config
+
+
+def show_separator():
+    size = os.get_terminal_size()
+    print("—" * size.columns)
 
 
 def show_code(code: typing.Code):

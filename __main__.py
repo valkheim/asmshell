@@ -16,6 +16,8 @@ def welcome():
         padding = (10 - len(k)) * " "
         print(f" {k}: {padding}{v}")
 
+    print()
+
 
 if "verbose":
     welcome()
