@@ -8,6 +8,7 @@ authors = ["Charles Paulet <valkheim@protonmail.com>"]
 python = "^3.10"
 keystone-engine = "^0.9.2"
 unicorn = "^2.0.0"
+colorama = "^0.4.5"
 
 [tool.poetry.dev-dependencies]
 pre-commit = "^2.20.0"

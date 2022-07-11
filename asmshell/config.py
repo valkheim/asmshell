@@ -19,6 +19,8 @@ class Singleton(type):
 class Config(metaclass=Singleton):
     ks: object = dataclasses.field(init=False)
     mu: object = dataclasses.field(init=False)
+    emu_previous_mu: object = dataclasses.field(init=False)
+    emu_previous_ctx: object = dataclasses.field(init=False)
 
     asm_arch: int = dataclasses.field(default=keystone.KS_ARCH_X86)
     asm_mode: int = dataclasses.field(default=keystone.KS_MODE_64)
@@ -39,6 +41,8 @@ class Config(metaclass=Singleton):
         self.mu.reg_write(
             unicorn.x86_const.UC_X86_REG_RSP, self.emu_base + 0x200000
         )
+        self.emu_previous_mu = unicorn.Uc(self.emu_arch, self.emu_mode)
+        self.emu_previous_ctx = self.mu.context_save()
 
     def __post_init__(self):
         self.init_keystone()

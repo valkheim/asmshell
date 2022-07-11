@@ -43,7 +43,7 @@ class Repl:
         readline.set_history_length(1000)
         atexit.register(readline.write_history_file, self.histfile)
 
-    def parse_internal_command(self, user_str: str):
+    def parse_internal_command(self, user_str: str) -> None:
         if user_str in [".q", ".quit"]:
             utils.exit()
         elif user_str in [".cls", ".clear"]:
@@ -51,7 +51,7 @@ class Repl:
         else:
             utils.ko("Unknow command")
 
-    def parse_asm(self, user_str: str):
+    def parse_asm(self, user_str: str) -> None:
         if (code := assemble.assemble(user_str)) is None:
             return
 
@@ -59,7 +59,7 @@ class Repl:
         emulate.emulate(code.machine_code)
         display.show_separator()
 
-    def parse(self, user_str: str):
+    def parse(self, user_str: str) -> None:
         if len(user_str) > 1 and user_str[0] == ".":
             self.parse_internal_command(user_str)
         else:
