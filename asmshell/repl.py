@@ -57,6 +57,7 @@ class Repl:
 
         display.show_code(code)
         emulate.emulate(code.machine_code)
+        display.show_separator()
 
     def parse(self, user_str: str):
         if len(user_str) > 1 and user_str[0] == ".":
