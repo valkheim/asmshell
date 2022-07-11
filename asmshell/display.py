@@ -1,8 +1,8 @@
 import unicorn.x86_const
-from typing import List
-from . import typing
-from . import utils
+
+from . import typing, utils
 from .config import config
+
 
 def show_code(code: typing.Code):
     print("CODE:")
@@ -17,6 +17,7 @@ def show_code(code: typing.Code):
         print(" " * spaces, end=" | ")
         print(mnem)
         rip += len(insn)
+
 
 def show_x86_64_registers():
     print("REGISTERS:")
@@ -35,6 +36,7 @@ def show_x86_64_registers():
         "\n"
         f"rip: {config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP):016x}"
     )
+
 
 def show_x86_64_stack():
     print("STACK:")

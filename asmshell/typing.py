@@ -1,5 +1,5 @@
-from collections import namedtuple
 from typing import List
+
 
 class Code:
     mnemonics: List[str]

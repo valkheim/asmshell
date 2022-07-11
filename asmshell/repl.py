@@ -1,22 +1,22 @@
-import readline
-import readline
-from typing import List, Callable, Optional
 import atexit
 import os
-from . import utils
-from . import assemble
-from . import emulate
-from . import display
+import readline
+from typing import Callable, List, Optional
+
+from . import assemble, display, emulate, utils
+
 
 class Repl:
     @staticmethod
-    def __make_completer(vocabulary: List[str]) -> Callable[[str, int], Optional[str]]:
+    def __make_completer(
+        vocabulary: List[str],
+    ) -> Callable[[str, int], Optional[str]]:
         def custom_complete(text: str, state: int) -> str:
             results = [x for x in vocabulary if x.startswith(text)] + [None]
             return results[state]
 
         return custom_complete
-    
+
     def __init__(self, vocabulary: List[str], prompt: str = "> "):
         self.prompt = prompt
         self.vocabulary = vocabulary
@@ -37,7 +37,8 @@ class Repl:
                 "         the command history of this session won't be saved.\n"
                 "         Either change this file's permissions, recreate it,\n"
                 "         or use an alternate path with the SDB_HISTORY_FILE\n"
-                "         environment variable.")
+                "         environment variable."
+            )
             return
         readline.set_history_length(1000)
         atexit.register(readline.write_history_file, self.histfile)
@@ -67,10 +68,10 @@ class Repl:
         while True:
             try:
                 line = input(self.prompt).strip()
-            except KeyboardInterrupt: # Ctrl+C
+            except KeyboardInterrupt:  # Ctrl+C
                 line = ""
                 print()
-            except (EOFError, SystemExit): # Ctrl+D
+            except (EOFError, SystemExit):  # Ctrl+D
                 break
 
             if not line:

@@ -1,8 +1,10 @@
-from keystone import *
-from .config import config
-from . import utils
 from typing import Optional
-from . import typing
+
+import keystone
+
+from . import typing, utils
+from .config import config
+
 
 def assemble(asm_string: str) -> Optional[typing.Code]:
     code = typing.Code()
@@ -13,8 +15,8 @@ def assemble(asm_string: str) -> Optional[typing.Code]:
             code.mnemonics.append(utils.clean_str(asm_mnem))
             code.instructions.append(encoding)
             ba += bytearray(encoding)
-        
-    except keystone.KsError as e:
+
+    except keystone.keystone.KsError:
         utils.ko(f"Cannot assemble {asm_string}")
         return None
 
