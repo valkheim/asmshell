@@ -10,7 +10,6 @@ commands = {
 
 
 def welcome():
-    print("Welcome to my asm shell")
     print("Commands")
     for k, v in commands.items():
         padding = (10 - len(k)) * " "
