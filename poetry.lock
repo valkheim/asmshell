@@ -7,6 +7,14 @@ optional = false
 python-versions = ">=3.6.1"
 
 [[package]]
+name = "colorama"
+version = "0.4.5"
+description = "Cross-platform colored terminal text."
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+
+[[package]]
 name = "distlib"
 version = "0.3.4"
 description = "Distribution utilities"
@@ -134,10 +142,11 @@ testing = ["coverage (>=4)", "coverage-enable-subprocess (>=1)", "flaky (>=3)", 
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "f52c795c395c458096b38759f8fc3148f155ed15259f04036560a071b032af15"
+content-hash = "83b275d7882507f7fa43e4cb8935db75e331c377001497fe4c21f3b817dd28bc"
 
 [metadata.files]
 cfgv = []
+colorama = []
 distlib = []
 filelock = []
 identify = []

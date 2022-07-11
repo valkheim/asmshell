@@ -49,3 +49,8 @@ def hexdump(src, base=0x0, length=0x10, sep="."):
         )
 
     return lines
+
+
+def isBitSet(n: int, bit_offset: int) -> bool:
+    mask = 1 << bit_offset
+    return (n & mask) != 0
