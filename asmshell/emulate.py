@@ -1,5 +1,6 @@
+from . import display
 from .config import config
-from  . import display
+
 
 def emulate(code: bytes):
     config.mu.mem_write(config.emu_base, code)
