@@ -11,6 +11,9 @@ def assemble(asm_string: str) -> Optional[typing.Code]:
     ba = bytearray()
     try:
         for asm_mnem in asm_string.split(";"):
+            if not asm_mnem:
+                continue
+
             encoding, _ = config.ks.asm(asm_mnem)
             code.mnemonics.append(utils.clean_str(asm_mnem))
             code.instructions.append(encoding)
