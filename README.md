@@ -3,7 +3,7 @@
 ```console
 $ sudo apt install poetry
 $ poetry install
-$ poetry run python .
+$ poetry run asmshell
 ```
 
 # Run project (for devs)
@@ -13,7 +13,7 @@ $ sudo apt install poetry
 $ poetry config virtualenvs.in-project true
 $ poetry install
 $ poetry run pre-commit install
-$ poetry run python .
+$ poetry run asmshell
 ```
 
 # Demo
@@ -138,6 +138,19 @@ STACK:
 0000000000000030: 00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00 |................|
 —————————————————————————————————————————————————————————————————————————————————————
 > .quit
+```
+
+# Run tests
+
+```console
+$ poetry run test
+```
+
+OR
+
+```console
+$ poetry run coverage
+$ firefox htmlcov/index.html &
 ```
 
 # Similar projects
