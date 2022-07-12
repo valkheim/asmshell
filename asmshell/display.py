@@ -65,11 +65,11 @@ def get_eflags_str():
 def show_x86_64_registers():
     print("REGISTERS:")
     print(
-        f"rax:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RAX)}  r8:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R8)}  cs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CS)}\n"
-        f"rbx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBX)}  r9:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R9)}  ss: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_SS)}\n"
-        f"rcx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RCX)}  r10: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R10)}  ds: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_DS)}\n"
-        f"rdx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDX)}  r11: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R11)}  es: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_ES)}\n"
-        f"rdi:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDI)}  r12: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R12)}  fs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_FS)}\n"
+        f"rax:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RAX)}  r8:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R8)}  cs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CS)}  cr0: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR0)}\n"
+        f"rbx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBX)}  r9:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R9)}  ss: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_SS)}  cr1: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR1)}\n"
+        f"rcx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RCX)}  r10: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R10)}  ds: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_DS)}  cr2: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR2)}\n"
+        f"rdx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDX)}  r11: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R11)}  es: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_ES)}  cr3: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR3)}\n"
+        f"rdi:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDI)}  r12: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R12)}  fs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_FS)}  cr4: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR4)}\n"
         f"rsi:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RSI)}  r13: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R13)}  gs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_GS)}\n"
         f"rbp:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBP)}  r14: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R14)}\n"
         f"rsp:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RSP)}  r15: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R15)}\n"
