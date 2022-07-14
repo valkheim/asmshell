@@ -40,14 +40,25 @@ def stack(_: Optional[str] = None) -> None:
 
 
 def display_memory_range(cmd: str, length: int) -> None:
-    range = utils.get_memory_range(cmd)
+    if (range := utils.get_memory_range(cmd)) is None:
+        return None
+
     range.end = range.start + length
     mem = config.config.mu.mem_read(range.start, range.end - range.start)
     utils.hexdump(mem, base=range.start)
 
 
 def db(cmd: str) -> None:
-    """Display byte"""
+    """Display byte
+
+    .db <va> -- display byte at address <addr>
+
+    Example:
+    > mov bx, 'A' ; mov [10], bx
+    [...]
+    > .db 10
+    0000000000000010: 41     |A               |
+    """
     display_memory_range(cmd, 1)
 
 
@@ -69,7 +80,6 @@ def dq(cmd: str) -> None:
 def di(cmd: str) -> None:
     """Display instruction(s)
 
-    Examples:
     .di -- display instruction at the instruction pointer
     .di <va> -- display instruction at address <addr>
     .di <va> <amount> -- display <amount> instruction(s) at address <va>
