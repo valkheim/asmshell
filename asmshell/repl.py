@@ -67,7 +67,7 @@ class Repl:
             return
 
         display.show_code(code)
-        emulate.emulate(code.machine_code)
+        emulate.emulate(code)
         display.show_separator()
 
     def parse(self, user_str: str) -> None:
