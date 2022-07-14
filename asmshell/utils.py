@@ -1,4 +1,8 @@
 import re
+from typing import Optional, Sequence
+
+from asmshell import typing
+from asmshell.typing import Range, T
 
 
 def ok(s: str):
@@ -41,3 +45,38 @@ def hexdump(src, base=0x0, length=0x10, sep="."):
 def isBitSet(n: int, bit_offset: int) -> bool:
     mask = 1 << bit_offset
     return (n & mask) != 0
+
+
+def seq_get(seq: Sequence[T], idx: int) -> Optional[T]:
+    try:
+        return seq[idx]
+    except IndexError:
+        return None
+
+
+def parse_address(addr: Optional[str], base: int = 16) -> Optional[int]:
+    if addr is None:
+        return None
+
+    try:
+        return int(addr, base)
+    except ValueError:
+        return None
+
+
+def get_memory_range(cmd: str) -> Optional[typing.Range]:
+    cmd = clean_str(cmd)
+    options = cmd.split()
+    addr_range = Range(
+        start=parse_address(seq_get(options, 1)),
+        end=parse_address(seq_get(options, 2)),
+    )
+    if addr_range.start is None:
+        ko("base address is missing to retrieve memory")
+        return None
+
+    if addr_range.end is not None and addr_range.end < addr_range.start:
+        ko("bad addresses range")
+        return None
+
+    return addr_range
