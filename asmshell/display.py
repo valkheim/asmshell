@@ -4,7 +4,7 @@ from typing import Dict
 
 import unicorn.x86_const
 
-from . import typing, utils
+from . import utils
 from .color import Color
 from .config import config
 
@@ -20,20 +20,17 @@ def show_separator():
     logger.info("—" * size.columns)
 
 
-def show_code(code: typing.Code):
+def show_code(code: bytes, virtual_address: int = None) -> None:
     logger.info(highlight("Code:"))
-    rip = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP)
-    for mnem, insn in zip(code.mnemonics, code.instructions):
-        line = f"{rip:016x}: "
-        for i in insn:
-            line += format(i, "02x") + " "
+    if virtual_address is None:
+        virtual_address = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP)
 
-        length = 2 * len(insn) + len(insn)
-        spaces = min(32, 32 - length)
-        line += " " * spaces + " | "
-        line += mnem
+    for i in config.md.disasm(code, virtual_address):
+        line = f"{i.address:016x}: "
+        line += " ".join([f"{byte:02x}" for byte in i.bytes])
+        line += " " * (max(0, 42 - len(line))) + " | "
+        line += f"{i.mnemonic} {i.op_str}"
         logger.info(line)
-        rip += len(insn)
 
 
 def get_x86_64_register(reg: int):
