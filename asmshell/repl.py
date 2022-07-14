@@ -56,8 +56,8 @@ class Repl:
 
     def parse_internal_command(self, user_str: str) -> None:
         for commands, _, function in config.config.commands:
-            if user_str in commands:
-                function()
+            if user_str.split()[0] in commands:
+                function(user_str)
 
     def parse_asm(self, user_str: str) -> None:
         if (code := assemble.assemble(user_str)) is None:
