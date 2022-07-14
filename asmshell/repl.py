@@ -1,9 +1,12 @@
 import atexit
+import logging
 import os
 import readline
 from typing import Callable, List, Optional
 
 from . import assemble, config, display, emulate
+
+logger = logging.getLogger(__name__)
 
 
 class Repl:
@@ -43,7 +46,7 @@ class Repl:
             pass
         except PermissionError:
             self.histfile = ""
-            print(
+            logging.exception(
                 f"Warning: You don't have permissions to read {history_file} and\n"
                 "         the command history of this session won't be saved.\n"
                 "         Either change this file's permissions, recreate it,\n"
@@ -79,7 +82,7 @@ class Repl:
                 line = input(self.prompt).strip()
             except KeyboardInterrupt:  # Ctrl+C
                 line = ""
-                print()
+                logger.info("")
             except (EOFError, SystemExit):  # Ctrl+D
                 break
 

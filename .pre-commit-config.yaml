@@ -36,6 +36,6 @@ repos:
     hooks:
     -   id: unittests
         name: run unit tests
-        entry: python -m unittest
+        entry: poetry run test
         language: system
         pass_filenames: false
