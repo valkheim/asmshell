@@ -3,7 +3,7 @@ import os
 import readline
 from typing import Callable, List, Optional
 
-from . import assemble, display, emulate, utils
+from . import assemble, config, display, emulate
 
 
 class Repl:
@@ -17,11 +17,22 @@ class Repl:
 
         return custom_complete
 
-    def __init__(self, vocabulary: List[str], prompt: str = "> "):
+    def __init__(
+        self,
+        prompt: str = "> ",
+    ):
         self.prompt = prompt
-        self.vocabulary = vocabulary
         self.histfile = ""
-        readline.set_completer(Repl.__make_completer(vocabulary))
+
+        readline.set_completer(
+            Repl.__make_completer(
+                [
+                    command_literal
+                    for command_literals, _, _ in config.config.commands
+                    for command_literal in command_literals
+                ]
+            )
+        )
         readline.parse_and_bind("tab: complete")
 
     def enable_history(self, history_file: str) -> None:
@@ -44,12 +55,9 @@ class Repl:
         atexit.register(readline.write_history_file, self.histfile)
 
     def parse_internal_command(self, user_str: str) -> None:
-        if user_str in [".q", ".quit"]:
-            utils.exit()
-        elif user_str in [".cls", ".clear"]:
-            utils.clear()
-        else:
-            utils.ko("Unknow command")
+        for commands, _, function in config.config.commands:
+            if user_str in commands:
+                function()
 
     def parse_asm(self, user_str: str) -> None:
         if (code := assemble.assemble(user_str)) is None:

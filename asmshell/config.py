@@ -17,6 +17,9 @@ class Singleton(type):
 
 @dataclasses.dataclass()
 class Config(metaclass=Singleton):
+    # postponed initialization, reducing this config module dependencies
+    commands: object = dataclasses.field(init=False)
+
     ks: object = dataclasses.field(init=False)
     mu: object = dataclasses.field(init=False)
     emu_previous_mu: object = dataclasses.field(init=False)

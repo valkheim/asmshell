@@ -1,30 +1,26 @@
 import os
 
-import asmshell.repl
-import asmshell.utils
-
-commands = {
-    ".q": "Quit this program",
-    ".quit": "Quit this program",
-}
-
-
-def welcome() -> None:
-    print("Commands")
-    for k, v in commands.items():
-        padding = (10 - len(k)) * " "
-        print(f" {k}: {padding}{v}")
-
-    print()
+from asmshell import commands, config, repl
 
 
 def main() -> None:
-    if "verbose":
-        welcome()
-
-    repl = asmshell.repl.Repl(commands.keys())
-    repl.enable_history(os.getenv("ASMSHELL_HISTORY_FILE", "~/.asms_history"))
-    repl.start()
+    config.config.commands = {
+        ((".h", ".help"), "This help", commands.help),
+        ((".q", ".quit"), "Quit this program", commands.quit),
+        ((".cls", ".clear"), "Clear screen", commands.clear),
+        (
+            (".r", ".reg", ".registers"),
+            "Display registers",
+            commands.registers,
+        ),
+        ((".s", ".stack"), "Display the stack", commands.stack),
+    }
+    commands.help()
+    session = repl.Repl()
+    session.enable_history(
+        os.getenv("ASMSHELL_HISTORY_FILE", "~/.asms_history")
+    )
+    session.start()
 
 
 if __name__ == "__main__":
