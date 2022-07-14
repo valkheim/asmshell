@@ -1,6 +1,4 @@
-import os
 import re
-import sys
 
 
 def ok(s: str):
@@ -9,17 +7,6 @@ def ok(s: str):
 
 def ko(s: str):
     print(f"[-] {s}")
-
-
-def exit():
-    sys.exit()
-
-
-def clear():
-    if os.name == "posix":
-        os.system("clear")
-    elif os.name == "nt":
-        os.system("cls")
 
 
 def clean_str(s: str) -> str:
