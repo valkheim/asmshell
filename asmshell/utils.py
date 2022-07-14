@@ -1,16 +1,19 @@
+import logging
 import re
 from typing import Optional, Sequence
 
 from asmshell import typing
 from asmshell.typing import Range, T
 
+logger = logging.getLogger(__name__)
+
 
 def ok(s: str):
-    print(f"[+] {s}")
+    logger.info(f"[+] {s}")
 
 
 def ko(s: str):
-    print(f"[-] {s}")
+    logger.info(f"[-] {s}")
 
 
 def clean_str(s: str) -> str:
@@ -33,7 +36,7 @@ def hexdump(src, base=0x0, length=0x10, sep="."):
         printable = "".join(
             ["{}".format((x <= 0x7F and FILTER[x]) or sep) for x in chars]
         )
-        print(
+        logger.info(
             "{0:016x}: {1:{2}s} |{3:{4}s}|".format(
                 c + base, hex_, length * 3, printable, length
             )

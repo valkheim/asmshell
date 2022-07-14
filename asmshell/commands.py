@@ -1,8 +1,11 @@
+import logging
 import os
 import sys
 from typing import Optional
 
 from . import config, display, utils
+
+logger = logging.getLogger(__name__)
 
 
 def quit(cmd: Optional[str] = None) -> None:
@@ -17,13 +20,13 @@ def clear(cmd: Optional[str] = None) -> None:
 
 
 def help(cmd: Optional[str] = None) -> None:
-    print("Commands")
+    logger.info(display.highlight("Commands:"))
     for command_literals, description, _ in config.config.commands:
         grouped_commands = ", ".join(command_literals)
         padding = (20 - len(grouped_commands)) * " "
-        print(f" {grouped_commands}: {padding}{description}")
+        logger.info(f" {grouped_commands}: {padding}{description}")
 
-    print()
+    logger.info("")
 
 
 def registers(cmd: Optional[str] = None) -> None:

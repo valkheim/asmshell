@@ -1,30 +1,38 @@
+import logging
 import os
 from typing import Dict
 
 import unicorn.x86_const
-from colorama import Fore, Style
 
 from . import typing, utils
+from .color import Color
 from .config import config
+
+logger = logging.getLogger(__name__)
+
+
+def highlight(string: str) -> str:
+    return f"{Color.BOLD}{Color.YELLOW}{string}{Color.END}"
 
 
 def show_separator():
     size = os.get_terminal_size()
-    print("—" * size.columns)
+    logger.info("—" * size.columns)
 
 
 def show_code(code: typing.Code):
-    print("CODE:")
+    logger.info(highlight("Code:"))
     rip = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP)
     for mnem, insn in zip(code.mnemonics, code.instructions):
-        print(f"{rip:016x}", end=": ")
+        line = f"{rip:016x}: "
         for i in insn:
-            print(format(i, "02x"), end=" ")
+            line += format(i, "02x") + " "
 
         length = 2 * len(insn) + len(insn)
         spaces = min(32, 32 - length)
-        print(" " * spaces, end=" | ")
-        print(mnem)
+        line += " " * spaces + " | "
+        line += mnem
+        logger.info(line)
         rip += len(insn)
 
 
@@ -32,7 +40,7 @@ def get_x86_64_register(reg: int):
     new = config.mu.reg_read(reg)
     old = config.emu_previous_mu.reg_read(reg)
     if old != new:
-        return f"{Fore.RED}{new:016x}{Style.RESET_ALL}"
+        return f"{Color.RED}{new:016x}{Color.END}"
     else:
         return f"{new:016x}"
 
@@ -119,8 +127,8 @@ def get_cr4_str() -> str:
 
 
 def show_x86_64_registers():
-    print("REGISTERS:")
-    print(
+    logger.info(highlight("Registers:"))
+    logger.info(
         f"rax:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RAX)}  r8:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R8)}  cs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CS)}  cr0: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR0)} {get_cr0_str()}\n"
         f"rbx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBX)}  r9:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R9)}  ss: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_SS)}  cr1: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR1)}\n"
         f"rcx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RCX)}  r10: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R10)}  ds: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_DS)}  cr2: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR2)}\n"
@@ -135,7 +143,7 @@ def show_x86_64_registers():
 
 
 def show_x86_64_stack():
-    print("STACK:")
+    logger.info(highlight("Stack:"))
     stack_ptr = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RSP)
     stack_mem = config.mu.mem_read(stack_ptr, 0x10 * 4)
     utils.hexdump(stack_mem, base=stack_ptr)
