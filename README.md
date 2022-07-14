@@ -1,7 +1,11 @@
+# Asmshell
+
+A python x86_64 REPL based on keystone + unicorn.
+
 # Run project (for users)
 
 ```console
-$ sudo apt install poetry
+$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - # Poetry installation
 $ poetry install
 $ poetry run asmshell
 ```
@@ -9,10 +13,12 @@ $ poetry run asmshell
 # Run project (for devs)
 
 ```console
-$ sudo apt install poetry
+$ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python - # Poetry installation
 $ poetry config virtualenvs.in-project true
 $ poetry install
+$ pip3 install --user pre-commit # Pre-commit installation
 $ poetry run pre-commit install
+$ poetry run test
 $ poetry run asmshell
 ```
 
@@ -157,3 +163,4 @@ $ firefox htmlcov/index.html &
 
 * https://github.com/yrp604/rappel/
 * https://github.com/poppycompass/asmshell/
+* https://github.com/Tyilo/asm_repl
