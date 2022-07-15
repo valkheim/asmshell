@@ -2,9 +2,7 @@ import logging
 import os
 from typing import Dict
 
-import unicorn.x86_const
-
-from . import utils
+from . import registers, utils
 from .color import Color
 from .config import config
 
@@ -23,7 +21,7 @@ def show_separator():
 def show_code(code: bytes, virtual_address: int = None) -> None:
     logger.info(highlight("Code:"))
     if virtual_address is None:
-        virtual_address = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP)
+        virtual_address = config.mu.reg_read(registers.reg_get("rip"))
 
     for i in config.md.disasm(code, virtual_address):
         line = f"{i.address:016x}: "
@@ -53,7 +51,7 @@ def get_flags_str(reg: int, flags: Dict[int, str]) -> str:
 
 def get_eflags_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(unicorn.x86_const.UC_X86_REG_EFLAGS),
+        config.mu.reg_read(registers.reg_get("eflags")),
         {
             0: "CF",  # Carry Flag: Set by arithmetic instructions which generate either a carry or borrow. Set when an operation generates a carry to or a borrow from a destination operand.
             2: "PF",  # Parity flag: Set by most CPU instructions if the least significant (aka the low-order bits) of the destination operand contain an even number of 1's.
@@ -75,7 +73,7 @@ def get_eflags_str() -> str:
 
 def get_cr0_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(unicorn.x86_const.UC_X86_REG_CR0),
+        config.mu.reg_read(registers.reg_get("cr0")),
         {
             0: "PE",  # Protected Mode: If 1, system is in protected mode, else system is in real mode
             1: "MP",  # Monitor co-processor: interaction of WAIT/FWAIT instructions with TS flag in CR0
@@ -94,7 +92,7 @@ def get_cr0_str() -> str:
 
 def get_cr4_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(unicorn.x86_const.UC_X86_REG_CR4),
+        config.mu.reg_read(registers.reg_get("cr4")),
         {
             0: "VME",  # Virtual 8086 Mode Extensions  If set, enables support for the virtual interrupt flag (VIF) in virtual-8086 mode.
             1: "PVI",  # Protected-mode Virtual Interrupts  If set, enables support for the virtual interrupt flag (VIF) in protected mode.
@@ -126,21 +124,21 @@ def get_cr4_str() -> str:
 def show_x86_64_registers():
     logger.info(highlight("Registers:"))
     logger.info(
-        f"rax:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RAX)}  r8:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R8)}  cs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CS)}  cr0: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR0)} {get_cr0_str()}\n"
-        f"rbx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBX)}  r9:  {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R9)}  ss: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_SS)}  cr1: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR1)}\n"
-        f"rcx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RCX)}  r10: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R10)}  ds: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_DS)}  cr2: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR2)}\n"
-        f"rdx:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDX)}  r11: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R11)}  es: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_ES)}  cr3: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR3)}\n"
-        f"rdi:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RDI)}  r12: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R12)}  fs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_FS)}  cr4: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_CR4)} {get_cr4_str()}\n"
-        f"rsi:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RSI)}  r13: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R13)}  gs: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_GS)}\n"
-        f"rbp:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RBP)}  r14: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R14)}\n"
-        f"rsp:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RSP)}  r15: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_R15)}\n"
-        f"rip:    {get_x86_64_register(unicorn.x86_const.UC_X86_REG_RIP)}\n"
-        f"eflags: {get_x86_64_register(unicorn.x86_const.UC_X86_REG_EFLAGS)} {get_eflags_str()}"
+        f"rax:    {get_x86_64_register(registers.reg_get('rax'))}  r8:  {get_x86_64_register(registers.reg_get('r8'))}  cs: {get_x86_64_register(registers.reg_get('cs'))}  cr0: {get_x86_64_register(registers.reg_get('cr0'))} {get_cr0_str()}\n"
+        f"rbx:    {get_x86_64_register(registers.reg_get('rbx'))}  r9:  {get_x86_64_register(registers.reg_get('r9'))}  ss: {get_x86_64_register(registers.reg_get('ss'))}  cr1: {get_x86_64_register(registers.reg_get('cr1'))}\n"
+        f"rcx:    {get_x86_64_register(registers.reg_get('rcx'))}  r10: {get_x86_64_register(registers.reg_get('r10'))}  ds: {get_x86_64_register(registers.reg_get('ds'))}  cr2: {get_x86_64_register(registers.reg_get('cr2'))}\n"
+        f"rdx:    {get_x86_64_register(registers.reg_get('rdx'))}  r11: {get_x86_64_register(registers.reg_get('r11'))}  es: {get_x86_64_register(registers.reg_get('es'))}  cr3: {get_x86_64_register(registers.reg_get('cr3'))}\n"
+        f"rdi:    {get_x86_64_register(registers.reg_get('rdi'))}  r12: {get_x86_64_register(registers.reg_get('r12'))}  fs: {get_x86_64_register(registers.reg_get('fs'))}  cr4: {get_x86_64_register(registers.reg_get('cr4'))} {get_cr4_str()}\n"
+        f"rsi:    {get_x86_64_register(registers.reg_get('rsi'))}  r13: {get_x86_64_register(registers.reg_get('r13'))}  gs: {get_x86_64_register(registers.reg_get('gs'))}\n"
+        f"rbp:    {get_x86_64_register(registers.reg_get('rbp'))}  r14: {get_x86_64_register(registers.reg_get('r14'))}\n"
+        f"rsp:    {get_x86_64_register(registers.reg_get('rsp'))}  r15: {get_x86_64_register(registers.reg_get('r15'))}\n"
+        f"rip:    {get_x86_64_register(registers.reg_get('rip'))}\n"
+        f"eflags: {get_x86_64_register(registers.reg_get('eflags'))} {get_eflags_str()}"
     )
 
 
 def show_x86_64_stack():
     logger.info(highlight("Stack:"))
-    stack_ptr = config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RSP)
+    stack_ptr = config.mu.reg_read(registers.reg_get("rsp"))
     stack_mem = config.mu.mem_read(stack_ptr, 0x10 * 4)
     utils.hexdump(stack_mem, base=stack_ptr)
