@@ -23,6 +23,7 @@ config.config.commands = [
     ((".dq",), "Display quad-word values", commands.cmd_dq),
     ((".dm",), "Display memory", commands.cmd_dm),
     ((".di",), "Display instructions", commands.cmd_di),
+    ((".d", ".dump"), "Dump state to file", commands.cmd_dump),
 ]
 
 # Initialize registers
