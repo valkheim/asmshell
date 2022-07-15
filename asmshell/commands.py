@@ -39,42 +39,61 @@ def stack(_: Optional[str] = None) -> None:
     display.show_x86_64_stack()
 
 
-def display_memory_range(cmd: str, length: int) -> None:
-    if (range := utils.get_memory_range(cmd)) is None:
+def display_memory_chunks(cmd: str, chunk_length: int) -> None:
+    cmd = utils.clean_str(cmd)
+    options = cmd.split()
+    start = utils.parse_address(utils.seq_get(options, 1))
+    amount = int(utils.parse_address(utils.seq_get(options, 2)) or 1)
+    if start is None:
+        utils.ko("base address is missing to retrieve memory")
         return None
 
-    range.end = range.start + length
-    mem = config.config.mu.mem_read(range.start, range.end - range.start)
-    utils.hexdump(mem, base=range.start)
+    end = start + chunk_length * amount
+    mem = config.config.mu.mem_read(start, end - start)
+    utils.hexdump(mem, base=start)
 
 
 def db(cmd: str) -> None:
-    """Display byte
+    """Display byte(s)
 
-    .db <va> -- display byte at address <addr>
+    .db <va> <amount=1> -- display <amount> byte(s) at address <addr>
 
     Example:
-    > mov bx, 'A' ; mov [10], bx
-    [...]
+    > mov al, 0x10 ; mov bl, 'A' ; mov [al], bl
     > .db 10
-    0000000000000010: 41     |A               |
+    0000000000000010: 41    |A               |
+    > inc al ; mov bl, 'B' ; mov [al], bl
+    > .db 10 2
+    0000000000000010: 41 42 |AB              |
     """
-    display_memory_range(cmd, 1)
+    display_memory_chunks(cmd, 1)
 
 
 def dw(cmd: str) -> None:
-    """Display word"""
-    display_memory_range(cmd, 2)
+    """Display word(s)"""
+    display_memory_chunks(cmd, 2)
 
 
 def dd(cmd: str) -> None:
-    """Display double word"""
-    display_memory_range(cmd, 4)
+    """Display double word(s)"""
+    display_memory_chunks(cmd, 4)
 
 
 def dq(cmd: str) -> None:
-    """Display double quad word"""
-    display_memory_range(cmd, 8)
+    """Display double quad word(s)"""
+    display_memory_chunks(cmd, 8)
+
+
+def dm(cmd: str) -> None:
+    """Display memory
+
+    .dm <va_start> <va_end> -- display memory from <va_start> to <va_end>
+    """
+    if (range := utils.get_memory_range(cmd)) is None:
+        return None
+
+    mem = config.config.mu.mem_read(range.start, range.end)
+    utils.hexdump(mem, base=range.start)
 
 
 def di(cmd: str) -> None:

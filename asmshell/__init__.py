@@ -21,6 +21,7 @@ config.config.commands = [
     ((".dw",), "Display word values", commands.dw),
     ((".dd",), "Display double-word values", commands.dd),
     ((".dq",), "Display quad-word values", commands.dq),
+    ((".dm",), "Display memory", commands.dm),
     ((".di",), "Display instructions", commands.di),
 ]
 
