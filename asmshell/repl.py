@@ -4,7 +4,9 @@ import os
 import readline
 from typing import Callable, List, Optional
 
-from . import assemble, config, display, emulate
+from asmshell import utils
+
+from . import assembler, config, display, emulator
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +24,7 @@ class Repl:
 
     def __init__(
         self,
-        prompt: str = "> ",
+        prompt: str,
     ):
         self.prompt = prompt
         self.histfile = ""
@@ -63,18 +65,23 @@ class Repl:
                 function(user_str)
 
     def parse_asm(self, user_str: str) -> None:
-        if (code := assemble.assemble(user_str)) is None:
+        if (code := assembler.assemble(user_str)) is None:
             return
 
         display.show_code(code)
-        emulate.emulate(code)
+        emulator.emulate(code)
         display.show_separator()
 
     def parse(self, user_str: str) -> None:
-        if len(user_str) > 1 and user_str[0] == ".":
-            self.parse_internal_command(user_str)
-        else:
-            self.parse_asm(user_str)
+        for user_cmd in user_str.split(";"):
+            if not user_cmd:
+                continue
+
+            user_cmd = utils.clean_str(user_cmd)
+            if len(user_cmd) > 1 and user_cmd[0] == ".":
+                self.parse_internal_command(user_cmd)
+            else:
+                self.parse_asm(user_cmd)
 
     def start(self) -> None:
         while True:

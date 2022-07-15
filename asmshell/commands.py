@@ -1,7 +1,10 @@
+import json
 import logging
 import os
 import sys
 from typing import Optional
+
+from asmshell import emulator
 
 from . import config, display, registers, utils
 
@@ -127,3 +130,18 @@ def cmd_di(cmd: str) -> None:
         code += i.bytes
 
     display.show_code(code, virtual_address)
+
+
+def cmd_dump(cmd: str) -> None:
+    """Dump emulator state to json file
+
+    .dump <file.json>
+    """
+    options = utils.clean_str(cmd).split()
+    state = emulator.get_state()
+    if (filepath := utils.seq_get(options, 1)) is None:
+        utils.ko(".dump <file.json>")
+        print(json.dumps(state, indent=2))
+    else:
+        with open(filepath, "w") as fh:
+            json.dump(state, fh, indent=2)
