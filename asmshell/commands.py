@@ -3,25 +3,23 @@ import os
 import sys
 from typing import Optional
 
-import unicorn
-
-from . import config, display, utils
+from . import config, display, registers, utils
 
 logger = logging.getLogger(__name__)
 
 
-def quit(_cmd: Optional[str] = None) -> None:
+def cmd_quit(_cmd: Optional[str] = None) -> None:
     sys.exit()
 
 
-def clear(_cmd: Optional[str] = None) -> None:
+def cmd_clear(_cmd: Optional[str] = None) -> None:
     if os.name == "posix":
         os.system("clear")
     elif os.name == "nt":
         os.system("cls")
 
 
-def help(_cmd: Optional[str] = None) -> None:
+def cmd_help(_cmd: Optional[str] = None) -> None:
     logger.info(display.highlight("Commands:"))
     for command_literals, description, _ in config.config.commands:
         grouped_commands = ", ".join(command_literals)
@@ -31,11 +29,11 @@ def help(_cmd: Optional[str] = None) -> None:
     logger.info("")
 
 
-def registers(_cmd: Optional[str] = None) -> None:
+def cmd_registers(_cmd: Optional[str] = None) -> None:
     display.show_x86_64_registers()
 
 
-def stack(_: Optional[str] = None) -> None:
+def cmd_stack(_: Optional[str] = None) -> None:
     display.show_x86_64_stack()
 
 
@@ -53,7 +51,7 @@ def display_memory_chunks(cmd: str, chunk_length: int) -> None:
     utils.hexdump(mem, base=start)
 
 
-def db(cmd: str) -> None:
+def cmd_db(cmd: str) -> None:
     """Display byte(s)
 
     .db <va> <amount=1> -- display <amount> byte(s) at address <addr>
@@ -69,22 +67,22 @@ def db(cmd: str) -> None:
     display_memory_chunks(cmd, 1)
 
 
-def dw(cmd: str) -> None:
+def cmd_dw(cmd: str) -> None:
     """Display word(s)"""
     display_memory_chunks(cmd, 2)
 
 
-def dd(cmd: str) -> None:
+def cmd_dd(cmd: str) -> None:
     """Display double word(s)"""
     display_memory_chunks(cmd, 4)
 
 
-def dq(cmd: str) -> None:
+def cmd_dq(cmd: str) -> None:
     """Display double quad word(s)"""
     display_memory_chunks(cmd, 8)
 
 
-def dm(cmd: str) -> None:
+def cmd_dm(cmd: str) -> None:
     """Display memory
 
     .dm <va_start> <va_end> -- display memory from <va_start> to <va_end>
@@ -96,7 +94,7 @@ def dm(cmd: str) -> None:
     utils.hexdump(mem, base=range.start)
 
 
-def di(cmd: str) -> None:
+def cmd_di(cmd: str) -> None:
     """Display instruction(s)
 
     .di -- display instruction at the instruction pointer
@@ -107,7 +105,7 @@ def di(cmd: str) -> None:
     options = cmd.split()
     virtual_address = int(
         utils.seq_get(options, 1)
-        or config.config.mu.reg_read(unicorn.x86_const.UC_X86_REG_RIP)
+        or config.config.mu.reg_read(registers.get_reg("rip"))
     )
     amount = int(utils.seq_get(options, 2) or 1)
     # 2.3.11 AVX Instruction Length
