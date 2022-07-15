@@ -2,7 +2,7 @@ import logging
 import re
 from typing import Optional, Sequence
 
-from asmshell import typing
+from asmshell import config, registers, typing
 from asmshell.typing import Range, T
 
 logger = logging.getLogger(__name__)
@@ -57,7 +57,7 @@ def seq_get(seq: Sequence[T], idx: int) -> Optional[T]:
         return None
 
 
-def parse_address(addr: Optional[str], base: int = 16) -> Optional[int]:
+def parse_value(addr: Optional[str], base: int = 16) -> Optional[int]:
     if addr is None:
         return None
 
@@ -67,12 +67,26 @@ def parse_address(addr: Optional[str], base: int = 16) -> Optional[int]:
         return None
 
 
+def parse_variable(ptr: Optional[str]) -> Optional[int]:
+    return config.config.mu.reg_read(registers.reg_get(ptr[1:]))
+
+
+def parse_pointer(ptr: Optional[str]) -> Optional[int]:
+    if ptr is None:
+        return None
+
+    if ptr[0] == "$":
+        return parse_variable(ptr)
+
+    return parse_value(ptr)
+
+
 def get_memory_range(cmd: str) -> Optional[typing.Range]:
     cmd = clean_str(cmd)
     options = cmd.split()
     addr_range = Range(
-        start=parse_address(seq_get(options, 1)),
-        end=parse_address(seq_get(options, 2)),
+        start=parse_value(seq_get(options, 1)),
+        end=parse_value(seq_get(options, 2)),
     )
     if addr_range.start is None:
         ko("base address is missing to retrieve memory")

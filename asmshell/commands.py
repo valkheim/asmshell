@@ -40,8 +40,8 @@ def cmd_stack(_: Optional[str] = None) -> None:
 def display_memory_chunks(cmd: str, chunk_length: int) -> None:
     cmd = utils.clean_str(cmd)
     options = cmd.split()
-    start = utils.parse_address(utils.seq_get(options, 1))
-    amount = int(utils.parse_address(utils.seq_get(options, 2)) or 1)
+    start = utils.parse_pointer(utils.seq_get(options, 1))
+    amount = int(utils.parse_value(utils.seq_get(options, 2)) or 1)
     if start is None:
         utils.ko("base address is missing to retrieve memory")
         return None
@@ -103,11 +103,16 @@ def cmd_di(cmd: str) -> None:
     """
     cmd = utils.clean_str(cmd)
     options = cmd.split()
-    virtual_address = int(
-        utils.seq_get(options, 1)
-        or config.config.mu.reg_read(registers.get_reg("rip"))
-    )
-    amount = int(utils.seq_get(options, 2) or 1)
+    try:
+        virtual_address = int(
+            utils.seq_get(options, 1)
+            or config.config.mu.reg_read(registers.reg_get("rip"))
+        )
+        amount = int(utils.seq_get(options, 2) or 1)
+    except ValueError:
+        logging.exception("Cannot read command values")
+        return None
+
     # 2.3.11 AVX Instruction Length
     # The maximum length of an Intel 64 and IA-32 instruction remains 15 bytes.
     insn_max_length = 15

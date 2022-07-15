@@ -30,15 +30,15 @@ class TestBits(unittest.TestCase):
         self.assertTrue(utils.isBitSet(value, 5))
 
 
-class TestAddresses(unittest.TestCase):
-    def test_parse_valid_address(self) -> None:
-        self.assertEqual(utils.parse_address("deadbeef"), 0xDEADBEEF)
-        self.assertEqual(utils.parse_address("0xdeadbeef"), 0xDEADBEEF)
-        self.assertEqual(utils.parse_address("0b101010", 2), 42)
+class TestValues(unittest.TestCase):
+    def test_parse_valid_hex_value(self) -> None:
+        self.assertEqual(utils.parse_value("deadbeef"), 0xDEADBEEF)
+        self.assertEqual(utils.parse_value("0xdeadbeef"), 0xDEADBEEF)
+        self.assertEqual(utils.parse_value("0b101010", 2), 42)
 
-    def test_parse_invalid_address(self) -> None:
-        self.assertNotEqual(utils.parse_address("0b101010"), bin(42))
-        self.assertIsNone(utils.parse_address("not an address"))
+    def test_parse_invalid_hex_value(self) -> None:
+        self.assertNotEqual(utils.parse_value("0b101010"), bin(42))
+        self.assertIsNone(utils.parse_value("not an address"))
 
 
 class TestCollections(unittest.TestCase):
