@@ -1,6 +1,6 @@
 # Asmshell
 
-A python x86_64 REPL based on keystone + unicorn.
+A python x86_64 REPL based on keystone + unicorn + capstone.
 
 # Run project (for users)
 
