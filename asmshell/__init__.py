@@ -24,6 +24,7 @@ config.config.commands = [
     ((".dm",), "Display memory", commands.cmd_dm),
     ((".di",), "Display instructions", commands.cmd_di),
     ((".d", ".dump"), "Dump state to file", commands.cmd_dump),
+    ((".dec", ".decode"), "Decode instruction", commands.cmd_decode),
 ]
 
 # Initialize registers

@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import Optional, Sequence
+from typing import List, Optional, Sequence
 
 from asmshell import config, registers, typing
 from asmshell.typing import Range, T
@@ -97,3 +97,7 @@ def get_memory_range(cmd: str) -> Optional[typing.Range]:
         return None
 
     return addr_range
+
+
+def as_hex(xs: List[int]) -> List[str]:
+    return " ".join([f"{x:#04x}" for x in xs])

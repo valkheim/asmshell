@@ -145,3 +145,12 @@ def cmd_dump(cmd: str) -> None:
     else:
         with open(filepath, "w") as fh:
             json.dump(state, fh, indent=2)
+
+
+def cmd_decode(cmd: str) -> None:
+    options = cmd.split()
+    virtual_address = int(
+        utils.seq_get(options, 1)
+        or config.config.mu.reg_read(registers.reg_get("rip"))
+    )
+    display.show_instruction(virtual_address)

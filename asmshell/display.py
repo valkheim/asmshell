@@ -31,6 +31,38 @@ def show_code(code: bytes, virtual_address: int = None) -> None:
         logger.info(line)
 
 
+def show_instruction(virtual_address: int = None) -> None:
+    if virtual_address is None:
+        virtual_address = config.mu.reg_read(registers.reg_get("rip"))
+
+    logger.info(highlight("Instruction details:"))
+    mem = config.mu.mem_read(virtual_address, 15)
+    config.md.details = True
+    insn = next(config.md.disasm(mem, 15))
+    config.md.details = False
+    line = [f"mnemonic:     {insn.mnemonic} {insn.op_str}"]
+    code = " ".join([f"{b:#04x}" for b in insn.bytes])
+    line += [f"bytes:        {code}"]
+    line += [f"prefix:       {utils.as_hex(insn.prefix)}"]
+    line += [f"opcode:       {utils.as_hex(insn.opcode)}"]
+    line += [f"rex:          {insn.rex:#04x}"]
+    line += [f"addr size:    {insn.addr_size:#04x}"]
+    modrm = bin(insn.modrm)[2:].zfill(8)
+    modrm_line = f"modrm:        {insn.modrm:#04x} "
+    modrm_line += f"(mod: 0b{modrm[0:2]}) "
+    modrm_line += f"(reg: 0b{modrm[2:5]}) "
+    modrm_line += f"(rm: 0b{modrm[5:8]})"
+    line += [modrm_line]
+    line += [f"modrm offset: {insn.modrm_offset:#04x}"]
+    line += [f"disp:         {insn.disp:#04x}"]
+    sib_line = f"sib:          {insn.sib:#04x} "
+    sib_line += f"(base: 0b{(insn.reg_name(insn.sib_base) or 0):>03b}) "
+    sib_line += f"(index: 0b{(insn.reg_name(insn.sib_index) or 0):>03b}) "
+    sib_line += f"(scale: 0b{(insn.reg_name(insn.sib_scale) or 0):>02b})"
+    line += [sib_line]
+    logger.info(os.linesep.join(line))
+
+
 def get_x86_64_register(reg: int):
     new = config.mu.reg_read(reg)
     old = config.emu_previous_mu.reg_read(reg)

@@ -47,6 +47,10 @@ class TestCollections(unittest.TestCase):
         self.assertEqual(utils.seq_get(range(2), 1), 1)
         self.assertEqual(utils.seq_get(range(2), 2), None)
 
+    def test_list_as_hex(self) -> None:
+        self.assertEqual(utils.as_hex([]), "")
+        self.assertEqual(utils.as_hex([0, 1, 10]), "0x00 0x01 0x0a")
+
 
 class TestMemory(unittest.TestCase):
     def test_get_partial_memory_range(self) -> None:
