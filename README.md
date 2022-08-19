@@ -22,9 +22,9 @@ $ poetry run test
 $ poetry run asmshell
 ```
 
-# Demo
+# Commands
 
-From the `xorpd`'s `xchg rax,rax` [snippet 0x09](https://www.xorpd.net/pages/xchg_rax/snip_09.html):
+The prompt allows you to type ASM but there are also some extra commands available:
 
 ```console
 Commands:
@@ -33,15 +33,24 @@ Commands:
  .cls, .clear:         Clear screen
  .r, .reg, .registers: Display registers
  .s, .stack:           Display the stack
- .db:                  Display byte values
- .dw:                  Display word values
- .dd:                  Display double-word values
- .dq:                  Display quad-word values
- .dm:                  Display memory
- .di:                  Display instructions
+ .rb:                  Read byte values
+ .rw:                  Read word values
+ .rd:                  Read double-word values
+ .rq:                  Read quad-word values
+ .rm:                  Read memory
+ .ri:                  Read instructions
+ .wb:                  Write byte(s) values
  .d, .dump:            Dump state to file
  .dec, .decode:        Decode instruction
+```
 
+# Examples
+
+## Running code
+
+From the `xorpd`'s `xchg rax,rax` [snippet 0x09](https://www.xorpd.net/pages/xchg_rax/snip_09.html):
+
+```console
 > mov rax, 4
 Code:
 0000000000000000: 48 c7 c0 04 00 00 00     | mov rax, 4
@@ -104,6 +113,29 @@ Stack:
 ————————————————————————————————————————————————————————————————————————————————————————————————————————
 > .quit
 ```
+
+## Instruction decoding example
+
+```console
+> .wb 0 666690
+> .dec 0
+Instruction details:
+mnemonic:     nop
+bytes:        0x66 0x66 0x90
+prefix:       0x00 0x00 0x66 0x00
+opcode:       0x90 0x00 0x00 0x00
+rex:          0x00
+addr size:    0x08
+modrm:        0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)
+modrm offset: 0x00
+disp:         0x00
+sib:          0x00 (base: 0b000) (index: 0b000) (scale: 0b00)
+```
+
+# Other features
+
+* Fully featured prompt (arrow keys, history, commands auto-completion)
+* Updated registers highlighting
 
 # Run tests
 

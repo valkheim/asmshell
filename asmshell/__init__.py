@@ -23,7 +23,7 @@ config.config.commands = [
     ((".rq",), "Read quad-word values", commands.cmd_rq),
     ((".rm",), "Read memory", commands.cmd_rm),
     ((".ri",), "Read instructions", commands.cmd_ri),
-    ((".wb",), "Write byte(s) values", commands.cmd_wb),
+    ((".wb",), "Write byte values", commands.cmd_wb),
     ((".d", ".dump"), "Dump state to file", commands.cmd_dump),
     ((".dec", ".decode"), "Decode instruction", commands.cmd_decode),
 ]
