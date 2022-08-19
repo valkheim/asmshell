@@ -51,6 +51,15 @@ class TestCollections(unittest.TestCase):
         self.assertEqual(utils.as_hex([]), "")
         self.assertEqual(utils.as_hex([0, 1, 10]), "0x00 0x01 0x0a")
 
+    def test_get_bytes_sequence(self) -> None:
+        self.assertEqual(utils.get_bytes_sequence("aabb"), b"\xaa\xbb")
+        self.assertEqual(
+            utils.get_bytes_sequence(["aa", "bb"]),
+            b"\xaa\xbb",
+        )
+        self.assertEqual(utils.get_bytes_sequence("XX"), bytes())
+        self.assertEqual(utils.get_bytes_sequence("1"), b"")
+
 
 class TestMemory(unittest.TestCase):
     def test_get_partial_memory_range(self) -> None:
@@ -68,3 +77,11 @@ class TestMemory(unittest.TestCase):
     def test_get_untidy_memory_range(self) -> None:
         range = utils.get_memory_range(".db 0020 0010")
         self.assertIsNone(range)
+
+
+class TestChunks(unittest.TestCase):
+    def test_chunks(self) -> None:
+        self.assertEqual(list(utils.chunks("", 2)), [])
+        self.assertEqual(list(utils.chunks("a", 2)), ["a"])
+        self.assertEqual(list(utils.chunks("abcd", 2)), ["ab", "cd"])
+        self.assertEqual(list(utils.chunks("abc", 2)), ["ab", "c"])

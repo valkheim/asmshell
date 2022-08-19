@@ -57,12 +57,12 @@ def seq_get(seq: Sequence[T], idx: int) -> Optional[T]:
         return None
 
 
-def parse_value(addr: Optional[str], base: int = 16) -> Optional[int]:
-    if addr is None:
+def parse_value(value: Optional[str], base: int = 16) -> Optional[int]:
+    if value is None:
         return None
 
     try:
-        return int(addr, base)
+        return int(value, base)
     except ValueError:
         return None
 
@@ -101,3 +101,23 @@ def get_memory_range(cmd: str) -> Optional[typing.Range]:
 
 def as_hex(xs: List[int]) -> List[str]:
     return " ".join([f"{x:#04x}" for x in xs])
+
+
+def chunks(xs: str, chunk_size=2):
+    i = 0
+    while i < len(xs):
+        yield xs[i : i + chunk_size]
+        i += chunk_size
+
+
+def get_bytes_sequence(data: List[str]) -> bytes:
+    seq = "".join(data)
+    if len(seq) % 2:
+        ko(f"{seq} is not an even sequence, please pad with zeroes")
+        return bytes()
+
+    try:
+        return bytes([parse_value(x) for x in chunks(seq, 2)])
+    except TypeError:
+        ko("bad bytes detected")
+        return bytes()

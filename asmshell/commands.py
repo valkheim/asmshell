@@ -97,6 +97,22 @@ def cmd_rm(cmd: str) -> None:
     utils.hexdump(mem, base=range.start)
 
 
+def write_memory_chunks(cmd: str) -> None:
+    cmd = utils.clean_str(cmd)
+    options = cmd.split()
+    va = utils.parse_pointer(utils.seq_get(options, 1))
+    data = utils.get_bytes_sequence(options[2:])
+    config.config.mu.mem_write(va, data)
+
+
+def cmd_wb(cmd: str) -> None:
+    """Write byte(s)
+
+    .wb <va> <byte(s)> -- Write <byte(s)> at address <va>
+    """
+    write_memory_chunks(cmd)
+
+
 def cmd_ri(cmd: str) -> None:
     """Read instruction(s)
 
