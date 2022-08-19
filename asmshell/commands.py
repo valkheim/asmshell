@@ -40,7 +40,7 @@ def cmd_stack(_: Optional[str] = None) -> None:
     display.show_x86_64_stack()
 
 
-def display_memory_chunks(cmd: str, chunk_length: int) -> None:
+def read_memory_chunks(cmd: str, chunk_length: int) -> None:
     cmd = utils.clean_str(cmd)
     options = cmd.split()
     start = utils.parse_pointer(utils.seq_get(options, 1))
@@ -54,41 +54,41 @@ def display_memory_chunks(cmd: str, chunk_length: int) -> None:
     utils.hexdump(mem, base=start)
 
 
-def cmd_db(cmd: str) -> None:
-    """Display byte(s)
+def cmd_rb(cmd: str) -> None:
+    """Read byte(s)
 
-    .db <va> <amount=1> -- display <amount> byte(s) at address <addr>
+    .rb <va> <amount=1> -- Read <amount> byte(s) at address <addr>
 
     Example:
     > mov al, 0x10 ; mov bl, 'A' ; mov [al], bl
-    > .db 10
+    > .rb 10
     0000000000000010: 41    |A               |
     > inc al ; mov bl, 'B' ; mov [al], bl
-    > .db 10 2
+    > .rb 10 2
     0000000000000010: 41 42 |AB              |
     """
-    display_memory_chunks(cmd, 1)
+    read_memory_chunks(cmd, 1)
 
 
-def cmd_dw(cmd: str) -> None:
-    """Display word(s)"""
-    display_memory_chunks(cmd, 2)
+def cmd_rw(cmd: str) -> None:
+    """Read word(s)"""
+    read_memory_chunks(cmd, 2)
 
 
-def cmd_dd(cmd: str) -> None:
-    """Display double word(s)"""
-    display_memory_chunks(cmd, 4)
+def cmd_rd(cmd: str) -> None:
+    """Read double word(s)"""
+    read_memory_chunks(cmd, 4)
 
 
-def cmd_dq(cmd: str) -> None:
-    """Display double quad word(s)"""
-    display_memory_chunks(cmd, 8)
+def cmd_rq(cmd: str) -> None:
+    """Read double quad word(s)"""
+    read_memory_chunks(cmd, 8)
 
 
-def cmd_dm(cmd: str) -> None:
-    """Display memory
+def cmd_rm(cmd: str) -> None:
+    """Read memory
 
-    .dm <va_start> <va_end> -- display memory from <va_start> to <va_end>
+    .rm <va_start> <va_end> -- Read memory from <va_start> to <va_end>
     """
     if (range := utils.get_memory_range(cmd)) is None:
         return None
@@ -97,12 +97,12 @@ def cmd_dm(cmd: str) -> None:
     utils.hexdump(mem, base=range.start)
 
 
-def cmd_di(cmd: str) -> None:
-    """Display instruction(s)
+def cmd_ri(cmd: str) -> None:
+    """Read instruction(s)
 
-    .di -- display instruction at the instruction pointer
-    .di <va> -- display instruction at address <addr>
-    .di <va> <amount> -- display <amount> instruction(s) at address <va>
+    .ri -- Read instruction at the instruction pointer
+    .ri <va> -- Read instruction at address <addr>
+    .ri <va> <amount> -- Read <amount> instruction(s) at address <va>
     """
     cmd = utils.clean_str(cmd)
     options = cmd.split()
