@@ -89,7 +89,11 @@ def get_memory_range(cmd: str) -> Optional[typing.Range]:
         end=parse_value(seq_get(options, 2)),
     )
     if addr_range.start is None:
-        ko("base address is missing to retrieve memory")
+        ko("start address is missing")
+        return None
+
+    if addr_range.end is None:
+        ko("end adress is missing")
         return None
 
     if addr_range.end is not None and addr_range.end < addr_range.start:

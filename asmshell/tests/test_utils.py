@@ -63,19 +63,17 @@ class TestCollections(unittest.TestCase):
 
 class TestMemory(unittest.TestCase):
     def test_get_partial_memory_range(self) -> None:
-        range = utils.get_memory_range(".db 0010")
-        self.assertIsNotNone(range)
-        self.assertEqual(range.start, 0x10)
-        self.assertEqual(range.end, None)
+        range = utils.get_memory_range(".rb 0010")
+        self.assertIsNone(range)
 
     def test_get_full_memory_range(self) -> None:
-        range = utils.get_memory_range(".db 0010 0020")
+        range = utils.get_memory_range(".rb 0010 0020")
         self.assertIsNotNone(range)
         self.assertEqual(range.start, 0x10)
         self.assertEqual(range.end, 0x20)
 
     def test_get_untidy_memory_range(self) -> None:
-        range = utils.get_memory_range(".db 0020 0010")
+        range = utils.get_memory_range(".rb 0020 0010")
         self.assertIsNone(range)
 
 

@@ -22,7 +22,7 @@ def cmd_clear(_cmd: Optional[str] = None) -> None:
         os.system("cls")
 
 
-def cmd_help(_cmd: Optional[str] = None) -> None:
+def show_generic_help() -> None:
     logger.info(display.highlight("Commands:"))
     for command_literals, description, _ in config.config.commands:
         grouped_commands = ", ".join(command_literals)
@@ -30,6 +30,22 @@ def cmd_help(_cmd: Optional[str] = None) -> None:
         logger.info(f" {grouped_commands}: {padding}{description}")
 
     logger.info("")
+
+
+def show_command_help(cmd: str) -> None:
+    requested_command = utils.seq_get(cmd.split(), 1)
+    for literals, _, function in config.config.commands:
+        if requested_command not in literals:
+            continue
+
+        logger.info(function.__doc__)
+
+
+def cmd_help(cmd: Optional[str] = None) -> None:
+    if cmd is None:
+        show_generic_help()
+    else:
+        show_command_help(cmd)
 
 
 def cmd_registers(_cmd: Optional[str] = None) -> None:
@@ -164,6 +180,25 @@ def cmd_dump(cmd: str) -> None:
 
 
 def cmd_decode(cmd: str) -> None:
+    """Decode instruction
+
+    .dec <va> -- Decode instruction at address <va>
+
+    Example:
+    > .wb 0 66 48 90
+    > .dec
+    Instruction details:
+    mnemonic:     nop
+    bytes:        0x66 0x48 0x90
+    prefix:       0x00 0x00 0x66 0x00
+    opcode:       0x90 0x00 0x00 0x00
+    rex:          0x48
+    addr size:    0x08
+    modrm:        0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)
+    modrm offset: 0x00
+    disp:         0x00
+    sib:          0x00 (base: 0b000) (index: 0b000) (scale: 0b00)
+    """
     options = cmd.split()
     virtual_address = int(
         utils.seq_get(options, 1)
