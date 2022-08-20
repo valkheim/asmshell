@@ -9,7 +9,6 @@ from .config import config
 def assemble(asm_string: str) -> Optional[bytes]:
     code = bytearray()
     try:
-
         encoding, _ = config.ks.asm(asm_string)
         code += bytearray(encoding)
 
