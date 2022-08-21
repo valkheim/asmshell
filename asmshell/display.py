@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Dict
 
-from . import registers, utils
+from . import color, registers, utils
 from .color import Color
 from .config import config
 
@@ -16,6 +16,25 @@ def highlight(string: str) -> str:
 def show_separator():
     size = os.get_terminal_size()
     logger.info("—" * size.columns)
+
+
+def show_generic_help() -> None:
+    logger.info(highlight("Commands:"))
+    for command_literals, description, _ in config.commands:
+        grouped_commands = ", ".join(command_literals)
+        padding = (20 - len(grouped_commands)) * " "
+        logger.info(f" {grouped_commands}: {padding}{description}")
+
+    logger.info("")
+
+
+def show_command_help(cmd: str) -> None:
+    requested_command = utils.seq_get(cmd.split(), 1)
+    for literals, _, function in config.commands:
+        if requested_command not in literals:
+            continue
+
+        logger.info(function.__doc__)
 
 
 def show_code(code: bytes, virtual_address: int = None) -> None:

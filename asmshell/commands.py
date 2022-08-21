@@ -4,9 +4,7 @@ import os
 import sys
 from typing import Optional
 
-from asmshell import emulator
-
-from . import config, display, registers, utils
+from . import config, display, emulator, memory, registers, utils
 
 logger = logging.getLogger(__name__)
 
@@ -22,30 +20,11 @@ def cmd_clear(_cmd: Optional[str] = None) -> None:
         os.system("cls")
 
 
-def show_generic_help() -> None:
-    logger.info(display.highlight("Commands:"))
-    for command_literals, description, _ in config.config.commands:
-        grouped_commands = ", ".join(command_literals)
-        padding = (20 - len(grouped_commands)) * " "
-        logger.info(f" {grouped_commands}: {padding}{description}")
-
-    logger.info("")
-
-
-def show_command_help(cmd: str) -> None:
-    requested_command = utils.seq_get(cmd.split(), 1)
-    for literals, _, function in config.config.commands:
-        if requested_command not in literals:
-            continue
-
-        logger.info(function.__doc__)
-
-
 def cmd_help(cmd: Optional[str] = None) -> None:
     if cmd is None:
-        show_generic_help()
+        display.show_generic_help()
     else:
-        show_command_help(cmd)
+        display.show_command_help(cmd)
 
 
 def cmd_registers(_cmd: Optional[str] = None) -> None:
@@ -54,20 +33,6 @@ def cmd_registers(_cmd: Optional[str] = None) -> None:
 
 def cmd_stack(_: Optional[str] = None) -> None:
     display.show_x86_64_stack()
-
-
-def read_memory_chunks(cmd: str, chunk_length: int) -> None:
-    cmd = utils.clean_str(cmd)
-    options = cmd.split()
-    start = utils.parse_pointer(utils.seq_get(options, 1))
-    amount = int(utils.parse_value(utils.seq_get(options, 2)) or 1)
-    if start is None:
-        utils.ko("base address is missing to retrieve memory")
-        return None
-
-    end = start + chunk_length * amount
-    mem = config.config.mu.mem_read(start, end - start)
-    utils.hexdump(mem, base=start)
 
 
 def cmd_rb(cmd: str) -> None:
@@ -83,22 +48,22 @@ def cmd_rb(cmd: str) -> None:
     > .rb 10 2
     0000000000000010: 41 42 |AB              |
     """
-    read_memory_chunks(cmd, 1)
+    memory.read_memory_chunks(cmd, 1)
 
 
 def cmd_rw(cmd: str) -> None:
     """Read word(s)"""
-    read_memory_chunks(cmd, 2)
+    memory.read_memory_chunks(cmd, 2)
 
 
 def cmd_rd(cmd: str) -> None:
     """Read double word(s)"""
-    read_memory_chunks(cmd, 4)
+    memory.read_memory_chunks(cmd, 4)
 
 
 def cmd_rq(cmd: str) -> None:
     """Read double quad word(s)"""
-    read_memory_chunks(cmd, 8)
+    memory.read_memory_chunks(cmd, 8)
 
 
 def cmd_rm(cmd: str) -> None:
@@ -113,20 +78,12 @@ def cmd_rm(cmd: str) -> None:
     utils.hexdump(mem, base=range.start)
 
 
-def write_memory_chunks(cmd: str) -> None:
-    cmd = utils.clean_str(cmd)
-    options = cmd.split()
-    va = utils.parse_pointer(utils.seq_get(options, 1))
-    data = utils.get_bytes_sequence(options[2:])
-    config.config.mu.mem_write(va, data)
-
-
 def cmd_wb(cmd: str) -> None:
     """Write byte(s)
 
     .wb <va> <byte(s)> -- Write <byte(s)> at address <va>
     """
-    write_memory_chunks(cmd)
+    memory.write_memory_chunks(cmd)
 
 
 def cmd_ri(cmd: str) -> None:
