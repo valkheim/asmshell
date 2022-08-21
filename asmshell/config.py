@@ -9,7 +9,7 @@ import unicorn.x86_const
 class Singleton(type):
     _instances = {}
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args, **kwargs) -> object:
         if "renew" in kwargs and kwargs["renew"] is True:
             del kwargs["renew"]
             return super().__call__(*args, **kwargs)
@@ -44,11 +44,11 @@ class Config(metaclass=Singleton):
     md_arch: int = dataclasses.field(default=capstone.CS_ARCH_X86)
     md_mode: int = dataclasses.field(default=capstone.CS_MODE_64)
 
-    def init_keystone(self):
+    def init_keystone(self) -> None:
         self.ks = keystone.Ks(self.asm_arch, self.asm_mode)
         self.ks.syntax = self.asm_syntax
 
-    def init_unicorn(self):
+    def init_unicorn(self) -> None:
         self.mu = unicorn.Uc(self.emu_arch, self.emu_mode)
         self.mu.mem_map(self.emu_base, self.emu_mem_size)
         self.mu.reg_write(
@@ -57,11 +57,11 @@ class Config(metaclass=Singleton):
         self.emu_previous_mu = unicorn.Uc(self.emu_arch, self.emu_mode)
         self.emu_previous_ctx = self.mu.context_save()
 
-    def init_capstone(self):
+    def init_capstone(self) -> None:
         self.md = capstone.Cs(self.md_arch, self.md_mode)
         self.md.detail = True
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         self.init_keystone()
         self.init_unicorn()
         self.init_capstone()

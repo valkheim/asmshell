@@ -10,10 +10,12 @@ logger = logging.getLogger(__name__)
 
 
 def cmd_quit(_cmd: Optional[str] = None) -> None:
+    """Quit the program"""
     sys.exit()
 
 
 def cmd_clear(_cmd: Optional[str] = None) -> None:
+    """Clear screen"""
     if os.name == "posix":
         os.system("clear")
     elif os.name == "nt":
@@ -21,6 +23,7 @@ def cmd_clear(_cmd: Optional[str] = None) -> None:
 
 
 def cmd_help(cmd: Optional[str] = None) -> None:
+    """Shows the help"""
     if cmd is None:
         display.show_generic_help()
     else:
@@ -28,10 +31,12 @@ def cmd_help(cmd: Optional[str] = None) -> None:
 
 
 def cmd_registers(_cmd: Optional[str] = None) -> None:
+    """Shows the registers"""
     display.show_x86_64_registers()
 
 
 def cmd_stack(_: Optional[str] = None) -> None:
+    """Shows the stack"""
     display.show_x86_64_stack()
 
 

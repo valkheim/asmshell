@@ -1,6 +1,6 @@
 import logging
 import re
-from typing import List, Optional, Sequence
+from typing import Generator, List, Optional, Sequence
 
 from asmshell import config, registers, typing
 from asmshell.typing import Range, T
@@ -8,11 +8,11 @@ from asmshell.typing import Range, T
 logger = logging.getLogger(__name__)
 
 
-def ok(s: str):
+def ok(s: str) -> None:
     logger.info(f"[+] {s}")
 
 
-def ko(s: str):
+def ko(s: str) -> None:
     logger.info(f"[-] {s}")
 
 
@@ -22,7 +22,7 @@ def clean_str(s: str) -> str:
     return s
 
 
-def hexdump(src, base=0x0, length=0x10, sep="."):
+def hexdump(src, base=0x0, length=0x10, sep=".") -> None:
     FILTER = "".join(
         [(len(repr(chr(x))) == 3) and chr(x) or sep for x in range(0xFF)]
     )
@@ -103,11 +103,11 @@ def get_memory_range(cmd: str) -> Optional[typing.Range]:
     return addr_range
 
 
-def as_hex(xs: List[int]) -> List[str]:
+def as_hex(xs: List[int]) -> str:
     return " ".join([f"{x:#04x}" for x in xs])
 
 
-def chunks(xs: str, chunk_size=2):
+def chunks(xs: str, chunk_size=2) -> Generator:
     i = 0
     while i < len(xs):
         yield xs[i : i + chunk_size]

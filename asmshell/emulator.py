@@ -19,7 +19,7 @@ def get_state() -> Dict[Any, Any]:
     return state
 
 
-def emulate(code: bytes):
+def emulate(code: bytes) -> None:
     config.mu.mem_write(config.emu_base, code)
     config.mu.emu_start(config.emu_base, config.emu_base + len(code))
     config.emu_previous_mu.context_restore(config.emu_previous_ctx)

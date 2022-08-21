@@ -2,7 +2,7 @@ import logging
 import os
 from typing import Dict
 
-from . import color, registers, utils
+from . import registers, utils
 from .color import Color
 from .config import config
 
@@ -13,7 +13,7 @@ def highlight(string: str) -> str:
     return f"{Color.BOLD}{Color.YELLOW}{string}{Color.END}"
 
 
-def show_separator():
+def show_separator() -> None:
     size = os.get_terminal_size()
     logger.info("—" * size.columns)
 
@@ -82,7 +82,7 @@ def show_instruction(virtual_address: int = None) -> None:
     logger.info(os.linesep.join(line))
 
 
-def get_x86_64_register(reg: int):
+def get_x86_64_register(reg: int) -> str:
     new = config.mu.reg_read(reg)
     old = config.emu_previous_mu.reg_read(reg)
     if old != new:
@@ -172,7 +172,7 @@ def get_cr4_str() -> str:
     )
 
 
-def show_x86_64_registers():
+def show_x86_64_registers() -> None:
     logger.info(highlight("Registers:"))
     logger.info(
         f"rax:    {get_x86_64_register(registers.reg_get('rax'))}  r8:  {get_x86_64_register(registers.reg_get('r8'))}  cs: {get_x86_64_register(registers.reg_get('cs'))}  cr0: {get_x86_64_register(registers.reg_get('cr0'))} {get_cr0_str()}\n"
@@ -188,7 +188,7 @@ def show_x86_64_registers():
     )
 
 
-def show_x86_64_stack():
+def show_x86_64_stack() -> None:
     logger.info(highlight("Stack:"))
     stack_ptr = config.mu.reg_read(registers.reg_get("rsp"))
     stack_mem = config.mu.mem_read(stack_ptr, 0x10 * 4)

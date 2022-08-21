@@ -25,7 +25,7 @@ class Repl:
     def __init__(
         self,
         prompt: str,
-    ):
+    ) -> object:
         self.prompt = prompt
         self.histfile = ""
 
