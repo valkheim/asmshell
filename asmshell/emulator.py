@@ -1,5 +1,7 @@
 from typing import Any, Dict
 
+import unicorn
+
 from asmshell import registers
 
 from . import commands
@@ -7,12 +9,14 @@ from .config import config
 
 
 def get_state() -> Dict[Any, Any]:
-    return {
-        "registers": {
-            k: config.mu.reg_read(v)
-            for (k, v) in registers.init_registers().items()
-        }
-    }
+    state = {"registers": {}}
+    for (k, v) in registers.init_registers().items():
+        try:
+            state["registers"][k] = config.mu.reg_read(v)
+        except unicorn.unicorn.UcError:
+            pass
+
+    return state
 
 
 def emulate(code: bytes):
