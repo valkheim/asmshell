@@ -74,10 +74,11 @@ def show_instruction(virtual_address: int = None) -> None:
     line += [modrm_line]
     line += [f"modrm offset: {insn.modrm_offset:#04x}"]
     line += [f"disp:         {insn.disp:#04x}"]
+    sib = bin(insn.sib)[2:].zfill(8)
     sib_line = f"sib:          {insn.sib:#04x} "
-    sib_line += f"(base: 0b{(insn.reg_name(insn.sib_base) or 0):>03b}) "
-    sib_line += f"(index: 0b{(insn.reg_name(insn.sib_index) or 0):>03b}) "
-    sib_line += f"(scale: 0b{(insn.reg_name(insn.sib_scale) or 0):>02b})"
+    sib_line += f"(scale: 0b{sib[0:2]}) "
+    sib_line += f"(index: 0b{sib[2:5]}) "
+    sib_line += f"(base: 0b{sib[5:8]}) "
     line += [sib_line]
     logger.info(os.linesep.join(line))
 

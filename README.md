@@ -129,7 +129,7 @@ addr size:    0x08
 modrm:        0x00 (mod: 0b00) (reg: 0b000) (rm: 0b000)
 modrm offset: 0x00
 disp:         0x00
-sib:          0x00 (base: 0b000) (index: 0b000) (scale: 0b00)
+sib:          0x00 (scale: 0b00) (index: 0b000) (base: 0b000)
 ```
 
 # Other features
