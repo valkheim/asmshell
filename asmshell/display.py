@@ -2,9 +2,9 @@ import logging
 import os
 from typing import Dict
 
-from . import registers, utils
+from asmshell import config, registers, utils
+
 from .color import Color
-from .config import config
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ def show_separator() -> None:
 
 def show_generic_help() -> None:
     logger.info(highlight("Commands:"))
-    for command_literals, description, _ in config.commands:
+    for command_literals, description, _ in config.config.commands:
         grouped_commands = ", ".join(command_literals)
         padding = (20 - len(grouped_commands)) * " "
         logger.info(f" {grouped_commands}: {padding}{description}")
@@ -40,10 +40,11 @@ def show_command_help(cmd: str) -> None:
 def show_code(code: bytes, virtual_address: int = None) -> None:
     logger.info(highlight("Code:"))
     if virtual_address is None:
-        virtual_address = config.mu.reg_read(registers.reg_get("rip"))
+        virtual_address = config.config.mu.reg_read(registers.reg_get("rip"))
 
-    for i in config.md.disasm(code, virtual_address):
-        line = f"{i.address:016x}: "
+    size = utils.get_ptr_size()
+    for i in config.config.md.disasm(code, virtual_address):
+        line = f"{i.address:0{size}x}: "
         line += " ".join([f"{byte:02x}" for byte in i.bytes])
         line += " " * (max(0, 42 - len(line))) + " | "
         line += f"{i.mnemonic} {i.op_str}"
@@ -52,13 +53,13 @@ def show_code(code: bytes, virtual_address: int = None) -> None:
 
 def show_instruction(virtual_address: int = None) -> None:
     if virtual_address is None:
-        virtual_address = config.mu.reg_read(registers.reg_get("rip"))
+        virtual_address = config.config.mu.reg_read(registers.reg_get("rip"))
 
     logger.info(highlight("Instruction details:"))
-    mem = config.mu.mem_read(virtual_address, 15)
-    config.md.details = True
-    insn = next(config.md.disasm(mem, 15))
-    config.md.details = False
+    mem = config.config.mu.mem_read(virtual_address, 15)
+    config.config.md.details = True
+    insn = next(config.config.md.disasm(mem, 15))
+    config.config.md.details = False
     line = [f"mnemonic:     {insn.mnemonic} {insn.op_str}"]
     code = " ".join([f"{b:#04x}" for b in insn.bytes])
     line += [f"bytes:        {code}"]
@@ -83,13 +84,14 @@ def show_instruction(virtual_address: int = None) -> None:
     logger.info(os.linesep.join(line))
 
 
-def get_x86_64_register(reg: int) -> str:
-    new = config.mu.reg_read(reg)
-    old = config.emu_previous_mu.reg_read(reg)
+def get_register(reg: int) -> str:
+    new = config.config.mu.reg_read(reg)
+    old = config.config.emu_previous_mu.reg_read(reg)
+    size = utils.get_ptr_size()
     if old != new:
-        return f"{Color.RED}{new:016x}{Color.END}"
+        return f"{Color.RED}{new:0{size}x}{Color.END}"
     else:
-        return f"{new:016x}"
+        return f"{new:0{size}x}"
 
 
 def get_flags_str(reg: int, flags: Dict[int, str]) -> str:
@@ -103,7 +105,7 @@ def get_flags_str(reg: int, flags: Dict[int, str]) -> str:
 
 def get_eflags_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(registers.reg_get("eflags")),
+        config.config.mu.reg_read(registers.reg_get("eflags")),
         {
             0: "CF",  # Carry Flag: Set by arithmetic instructions which generate either a carry or borrow. Set when an operation generates a carry to or a borrow from a destination operand.
             2: "PF",  # Parity flag: Set by most CPU instructions if the least significant (aka the low-order bits) of the destination operand contain an even number of 1's.
@@ -125,7 +127,7 @@ def get_eflags_str() -> str:
 
 def get_cr0_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(registers.reg_get("cr0")),
+        config.config.mu.reg_read(registers.reg_get("cr0")),
         {
             0: "PE",  # Protected Mode: If 1, system is in protected mode, else system is in real mode
             1: "MP",  # Monitor co-processor: interaction of WAIT/FWAIT instructions with TS flag in CR0
@@ -144,7 +146,7 @@ def get_cr0_str() -> str:
 
 def get_cr4_str() -> str:
     return get_flags_str(
-        config.mu.reg_read(registers.reg_get("cr4")),
+        config.config.mu.reg_read(registers.reg_get("cr4")),
         {
             0: "VME",  # Virtual 8086 Mode Extensions  If set, enables support for the virtual interrupt flag (VIF) in virtual-8086 mode.
             1: "PVI",  # Protected-mode Virtual Interrupts  If set, enables support for the virtual interrupt flag (VIF) in protected mode.
@@ -173,24 +175,47 @@ def get_cr4_str() -> str:
     )
 
 
-def show_x86_64_registers() -> None:
+def show_registers() -> None:
     logger.info(highlight("Registers:"))
+    if config.config.mode == "64":
+        return show_64b_registers()
+
+    return show_32b_registers()
+
+
+def show_64b_registers() -> None:
     logger.info(
-        f"rax:    {get_x86_64_register(registers.reg_get('rax'))}  r8:  {get_x86_64_register(registers.reg_get('r8'))}  cs: {get_x86_64_register(registers.reg_get('cs'))}  cr0: {get_x86_64_register(registers.reg_get('cr0'))} {get_cr0_str()}\n"
-        f"rbx:    {get_x86_64_register(registers.reg_get('rbx'))}  r9:  {get_x86_64_register(registers.reg_get('r9'))}  ss: {get_x86_64_register(registers.reg_get('ss'))}  cr1: {get_x86_64_register(registers.reg_get('cr1'))}\n"
-        f"rcx:    {get_x86_64_register(registers.reg_get('rcx'))}  r10: {get_x86_64_register(registers.reg_get('r10'))}  ds: {get_x86_64_register(registers.reg_get('ds'))}  cr2: {get_x86_64_register(registers.reg_get('cr2'))}\n"
-        f"rdx:    {get_x86_64_register(registers.reg_get('rdx'))}  r11: {get_x86_64_register(registers.reg_get('r11'))}  es: {get_x86_64_register(registers.reg_get('es'))}  cr3: {get_x86_64_register(registers.reg_get('cr3'))}\n"
-        f"rdi:    {get_x86_64_register(registers.reg_get('rdi'))}  r12: {get_x86_64_register(registers.reg_get('r12'))}  fs: {get_x86_64_register(registers.reg_get('fs'))}  cr4: {get_x86_64_register(registers.reg_get('cr4'))} {get_cr4_str()}\n"
-        f"rsi:    {get_x86_64_register(registers.reg_get('rsi'))}  r13: {get_x86_64_register(registers.reg_get('r13'))}  gs: {get_x86_64_register(registers.reg_get('gs'))}\n"
-        f"rbp:    {get_x86_64_register(registers.reg_get('rbp'))}  r14: {get_x86_64_register(registers.reg_get('r14'))}\n"
-        f"rsp:    {get_x86_64_register(registers.reg_get('rsp'))}  r15: {get_x86_64_register(registers.reg_get('r15'))}\n"
-        f"rip:    {get_x86_64_register(registers.reg_get('rip'))}\n"
-        f"eflags: {get_x86_64_register(registers.reg_get('eflags'))} {get_eflags_str()}"
+        f"rax:    {get_register(registers.reg_get('rax'))}  r8:  {get_register(registers.reg_get('r8'))}  cs: {get_register(registers.reg_get('cs'))}  cr0: {get_register(registers.reg_get('cr0'))} {get_cr0_str()}\n"
+        f"rbx:    {get_register(registers.reg_get('rbx'))}  r9:  {get_register(registers.reg_get('r9'))}  ss: {get_register(registers.reg_get('ss'))}  cr1: {get_register(registers.reg_get('cr1'))}\n"
+        f"rcx:    {get_register(registers.reg_get('rcx'))}  r10: {get_register(registers.reg_get('r10'))}  ds: {get_register(registers.reg_get('ds'))}  cr2: {get_register(registers.reg_get('cr2'))}\n"
+        f"rdx:    {get_register(registers.reg_get('rdx'))}  r11: {get_register(registers.reg_get('r11'))}  es: {get_register(registers.reg_get('es'))}  cr3: {get_register(registers.reg_get('cr3'))}\n"
+        f"rdi:    {get_register(registers.reg_get('rdi'))}  r12: {get_register(registers.reg_get('r12'))}  fs: {get_register(registers.reg_get('fs'))}  cr4: {get_register(registers.reg_get('cr4'))} {get_cr4_str()}\n"
+        f"rsi:    {get_register(registers.reg_get('rsi'))}  r13: {get_register(registers.reg_get('r13'))}  gs: {get_register(registers.reg_get('gs'))}\n"
+        f"rbp:    {get_register(registers.reg_get('rbp'))}  r14: {get_register(registers.reg_get('r14'))}\n"
+        f"rsp:    {get_register(registers.reg_get('rsp'))}  r15: {get_register(registers.reg_get('r15'))}\n"
+        f"rip:    {get_register(registers.reg_get('rip'))}\n"
+        f"eflags: {get_register(registers.reg_get('eflags'))} {get_eflags_str()}"
     )
 
 
-def show_x86_64_stack() -> None:
+def show_32b_registers() -> None:
+    logger.info(
+        f"eax:    {get_register(registers.reg_get('eax'))}  cs: {get_register(registers.reg_get('cs'))}  cr0: {get_register(registers.reg_get('cr0'))} {get_cr0_str()}\n"
+        f"ebx:    {get_register(registers.reg_get('ebx'))}  ss: {get_register(registers.reg_get('ss'))}  cr1: {get_register(registers.reg_get('cr1'))}\n"
+        f"ecx:    {get_register(registers.reg_get('ecx'))}  ds: {get_register(registers.reg_get('ds'))}  cr2: {get_register(registers.reg_get('cr2'))}\n"
+        f"edx:    {get_register(registers.reg_get('edx'))}  es: {get_register(registers.reg_get('es'))}  cr3: {get_register(registers.reg_get('cr3'))}\n"
+        f"edi:    {get_register(registers.reg_get('edi'))}  fs: {get_register(registers.reg_get('fs'))}  cr4: {get_register(registers.reg_get('cr4'))} {get_cr4_str()}\n"
+        f"esi:    {get_register(registers.reg_get('esi'))}  gs: {get_register(registers.reg_get('gs'))}\n"
+        f"ebp:    {get_register(registers.reg_get('ebp'))}\n"
+        f"esp:    {get_register(registers.reg_get('esp'))}\n"
+        f"eip:    {get_register(registers.reg_get('eip'))}\n"
+        f"eflags: {get_register(registers.reg_get('eflags'))} {get_eflags_str()}"
+    )
+
+
+def show_stack() -> None:
     logger.info(highlight("Stack:"))
-    stack_ptr = config.mu.reg_read(registers.reg_get("rsp"))
-    stack_mem = config.mu.mem_read(stack_ptr, 0x10 * 4)
-    utils.hexdump(stack_mem, base=stack_ptr)
+    stack_ptr = config.config.mu.reg_read(registers.reg_get("rsp"))
+    stack_mem = config.config.mu.mem_read(stack_ptr, 0x10 * 4)
+    size = utils.get_ptr_size()
+    utils.hexdump(stack_mem, base=stack_ptr, offset_size=size)

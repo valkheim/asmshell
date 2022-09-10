@@ -2,14 +2,13 @@ from typing import Optional
 
 import keystone
 
-from . import utils
-from .config import config
+from . import config, utils
 
 
 def assemble(asm_string: str) -> Optional[bytes]:
     code = bytearray()
     try:
-        encoding, _ = config.ks.asm(asm_string)
+        encoding, _ = config.config.ks.asm(asm_string)
         code += bytearray(encoding)
 
     except keystone.keystone.KsError:

@@ -4,6 +4,9 @@ from asmshell import config, memory
 
 
 class TestMemoryRead(unittest.TestCase):
+    def setUp(self) -> None:
+        config.config = config.Config("64", renew=True)
+
     def test_read_bytes(self) -> None:
         self.assertEqual(memory.read_memory_chunks(".rb", 1), b"\x00")
 
@@ -23,7 +26,7 @@ class TestMemoryRead(unittest.TestCase):
 class TestMemoryWrite(unittest.TestCase):
     def setUp(self) -> None:
         # Reset the config/state for each test
-        memory.config.config = config.Config(renew=True)
+        memory.config.config = config.Config("64", renew=True)
 
     def test_write_byte(self) -> None:
         self.assertEqual(memory.read_memory_chunks(".rb", 1), b"\x00")

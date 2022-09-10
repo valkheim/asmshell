@@ -32,12 +32,12 @@ def cmd_help(cmd: Optional[str] = None) -> None:
 
 def cmd_registers(_cmd: Optional[str] = None) -> None:
     """Shows the registers"""
-    display.show_x86_64_registers()
+    display.show_registers()
 
 
 def cmd_stack(_: Optional[str] = None) -> None:
     """Shows the stack"""
-    display.show_x86_64_stack()
+    display.show_stack()
 
 
 def cmd_rb(cmd: str) -> None:

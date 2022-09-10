@@ -22,7 +22,13 @@ def clean_str(s: str) -> str:
     return s
 
 
-def hexdump(src, base=0x0, length=0x10, sep=".") -> None:
+def get_ptr_size() -> int:
+    return int(config.config.mode) // 4
+
+
+def hexdump(
+    src, base=0x0, length=0x10, sep=".", offset_size: int = 16
+) -> None:
     FILTER = "".join(
         [(len(repr(chr(x))) == 3) and chr(x) or sep for x in range(0xFF)]
     )
@@ -37,8 +43,8 @@ def hexdump(src, base=0x0, length=0x10, sep=".") -> None:
             ["{}".format((x <= 0x7F and FILTER[x]) or sep) for x in chars]
         )
         logger.info(
-            "{0:016x}: {1:{2}s} |{3:{4}s}|".format(
-                c + base, hex_, length * 3, printable, length
+            "{0:0{5}x}: {1:{2}s} |{3:{4}s}|".format(
+                c + base, hex_, length * 3, printable, length, offset_size
             )
         )
 
