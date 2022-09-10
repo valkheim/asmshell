@@ -10,6 +10,8 @@ def test_unittest() -> None:
 
 
 def test_coverage() -> None:
-    completed = subprocess.run(["coverage", "run", "-m", "unittest"])
-    subprocess.run(["coverage", "html"])
+    completed = subprocess.run(
+        ["python", "-m", "coverage", "run", "-m", "unittest"]
+    )
+    subprocess.run(["python", "-m", "coverage", "html"])
     sys.exit(completed.returncode)
