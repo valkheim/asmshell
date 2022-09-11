@@ -1,6 +1,8 @@
 import unittest
+from typing import cast
 
 from asmshell import utils
+from asmshell.typing import Range
 
 
 class TestCleanStr(unittest.TestCase):
@@ -67,7 +69,7 @@ class TestMemory(unittest.TestCase):
         self.assertIsNone(range)
 
     def test_get_full_memory_range(self) -> None:
-        range = utils.get_memory_range(".rb 0010 0020")
+        range = cast(Range, utils.get_memory_range(".rb 0010 0020"))
         self.assertIsNotNone(range)
         self.assertEqual(range.start, 0x10)
         self.assertEqual(range.end, 0x20)

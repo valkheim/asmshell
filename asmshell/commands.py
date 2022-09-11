@@ -24,9 +24,9 @@ def cmd_clear(_cmd: Optional[str] = None) -> None:
 
 def cmd_help(cmd: Optional[str] = None) -> None:
     """Shows the help"""
-    if cmd is None:
+    if cmd in (None, ".h", ".help"):
         display.show_generic_help()
-    else:
+    elif cmd is not None:
         display.show_command_help(cmd)
 
 

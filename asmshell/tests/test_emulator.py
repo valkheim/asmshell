@@ -5,7 +5,7 @@ from asmshell import config, emulator
 
 class TestEmulator(unittest.TestCase):
     def setUp(self) -> None:
-        config.config = config.Config("64", renew=True)
+        config.config = config.Config("64", renew=True)  # type: ignore
 
     def test_get_state(self) -> None:
         state = emulator.get_state()

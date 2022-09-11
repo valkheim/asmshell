@@ -1,4 +1,5 @@
 import dataclasses
+from typing import Any, Dict, List
 
 import capstone
 import keystone
@@ -7,9 +8,9 @@ import unicorn.x86_const
 
 
 class Singleton(type):
-    _instances = {}
+    _instances: Dict[Any, Any] = {}
 
-    def __call__(cls, *args, **kwargs) -> object:
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
         if "renew" in kwargs and kwargs["renew"] is True:
             del kwargs["renew"]
             return super().__call__(*args, **kwargs)
@@ -23,15 +24,15 @@ class Singleton(type):
 @dataclasses.dataclass()
 class Config(metaclass=Singleton):
     # postponed initialization, reducing this config module dependencies
-    commands: object = dataclasses.field(init=False)
-    registers: dict = dataclasses.field(init=False)
+    commands: List[Any] = dataclasses.field(init=False)
+    registers: Dict[str, Any] = dataclasses.field(init=False)
     mode: str = dataclasses.field(init=False)
 
-    ks: object = dataclasses.field(init=False)
-    mu: object = dataclasses.field(init=False)
-    emu_previous_mu: object = dataclasses.field(init=False)
-    emu_previous_ctx: object = dataclasses.field(init=False)
-    md: object = dataclasses.field(init=False)
+    ks: keystone.Ks = dataclasses.field(init=False)
+    mu: unicorn.Uc = dataclasses.field(init=False)
+    emu_previous_mu: unicorn.Uc = dataclasses.field(init=False)
+    emu_previous_ctx: Any = dataclasses.field(init=False)
+    md: capstone.Cs = dataclasses.field(init=False)
 
     asm_arch: int = dataclasses.field(default=keystone.KS_ARCH_X86)
     asm_mode: int = dataclasses.field(init=False)
@@ -82,4 +83,4 @@ class Config(metaclass=Singleton):
         self.init_capstone()
 
 
-config = None
+config: Config = None  # type: ignore

@@ -15,5 +15,4 @@ def assemble(asm_string: str) -> Optional[bytes]:
         utils.ko(f"Cannot assemble {asm_string}")
         return None
 
-    code = bytes(code)
-    return code
+    return bytes(code)

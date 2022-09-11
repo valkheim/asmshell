@@ -17,7 +17,7 @@ class Repl:
         vocabulary: List[str],
     ) -> Callable[[str, int], Optional[str]]:
         def custom_complete(text: str, state: int) -> str:
-            results = [x for x in vocabulary if x.startswith(text)] + [None]
+            results: List[str] = [x for x in vocabulary if x.startswith(text)]
             return results[state]
 
         return custom_complete
@@ -25,7 +25,7 @@ class Repl:
     def __init__(
         self,
         prompt: str,
-    ) -> object:
+    ) -> None:
         self.prompt = prompt
         self.histfile = ""
 

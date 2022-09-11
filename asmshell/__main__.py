@@ -22,7 +22,7 @@ def get_arguments() -> argparse.Namespace:
 
 
 def init_config(mode: str) -> None:
-    config.config = config.Config(mode)
+    config.config: config.Config = config.Config(mode)  # type: ignore
 
 
 def init_commands() -> None:
@@ -53,7 +53,7 @@ def init_registers() -> None:
 
 
 def init_repl(quiet: bool) -> None:
-    prompt = ""
+    prompt: str = ""
     if not quiet:
         logging.getLogger(__name__).addHandler(
             init_library_logger(logging.INFO, "%(message)s")

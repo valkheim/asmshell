@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict
+from typing import Dict, Optional
 
 from asmshell import config, registers, utils
 
@@ -30,7 +30,7 @@ def show_generic_help() -> None:
 
 def show_command_help(cmd: str) -> None:
     requested_command = utils.seq_get(cmd.split(), 1)
-    for literals, _, function in config.commands:
+    for literals, _, function in config.config.commands:
         if requested_command not in literals:
             continue
 
@@ -84,7 +84,10 @@ def show_instruction(virtual_address: int = None) -> None:
     logger.info(os.linesep.join(line))
 
 
-def get_register(reg: int) -> str:
+def get_register(reg: Optional[int]) -> Optional[str]:
+    if reg is None:
+        return None
+
     new = config.config.mu.reg_read(reg)
     old = config.config.emu_previous_mu.reg_read(reg)
     size = utils.get_ptr_size()

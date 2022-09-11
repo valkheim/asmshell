@@ -5,7 +5,7 @@ from asmshell import config
 
 class TestConfig(unittest.TestCase):
     def setUp(self) -> None:
-        self.sample_config = config.Config("64", renew=True)
+        self.sample_config: config.Config = config.Config("64", renew=True)  # type: ignore
 
     def test_config_module_provides_a_default_none_instance(self) -> None:
         self.assertIsNone(config.config)
@@ -24,5 +24,5 @@ class TestConfig(unittest.TestCase):
             ),
         )
         self.assertNotEqual(
-            id(self.sample_config), id(config.Config("64", renew=True))
+            id(self.sample_config), id(config.Config("64", renew=True))  # type: ignore
         )
