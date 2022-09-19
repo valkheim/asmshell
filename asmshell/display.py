@@ -37,7 +37,7 @@ def show_command_help(cmd: str) -> None:
         logger.info(function.__doc__)
 
 
-def show_code(code: bytes, virtual_address: int = None) -> None:
+def show_code(code: bytes, virtual_address: Optional[int] = None) -> None:
     logger.info(highlight("Code:"))
     if virtual_address is None:
         virtual_address = config.config.mu.reg_read(registers.reg_get("rip"))
@@ -51,7 +51,7 @@ def show_code(code: bytes, virtual_address: int = None) -> None:
         logger.info(line)
 
 
-def show_instruction(virtual_address: int = None) -> None:
+def show_instruction(virtual_address: Optional[int] = None) -> None:
     if virtual_address is None:
         virtual_address = config.config.mu.reg_read(registers.reg_get("rip"))
 

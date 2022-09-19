@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import sys
-from typing import Optional
+from typing import Optional, cast
 
 from . import config, display, emulator, memory, registers, utils
 
@@ -80,7 +80,7 @@ def cmd_rm(cmd: str) -> None:
         return None
 
     mem = config.config.mu.mem_read(range.start, range.end)
-    utils.hexdump(mem, base=range.start)
+    utils.hexdump(mem, base=cast(int, range.start))
 
 
 def cmd_wb(cmd: str) -> None:

@@ -102,15 +102,15 @@ def get_memory_range(cmd: str) -> Optional[typing.Range]:
         end=parse_value(seq_get(options, 2)),
     )
     if addr_range.start is None:
-        ko("start address is missing")
+        ko("range start is missing")
         return None
 
     if addr_range.end is None:
-        ko("end adress is missing")
+        ko("range end is missing")
         return None
 
     if addr_range.end is not None and addr_range.end < addr_range.start:
-        ko("bad addresses range")
+        ko("bad range")
         return None
 
     return addr_range
