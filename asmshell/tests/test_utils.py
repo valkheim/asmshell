@@ -85,3 +85,9 @@ class TestChunks(unittest.TestCase):
         self.assertEqual(list(utils.chunks("a", 2)), ["a"])
         self.assertEqual(list(utils.chunks("abcd", 2)), ["ab", "cd"])
         self.assertEqual(list(utils.chunks("abc", 2)), ["ab", "c"])
+
+
+class TestPtrSize(unittest.TestCase):
+    def test_ptr_size_64(self) -> None:
+        expected_64_ptr_size = 16
+        self.assertEqual(utils.get_ptr_size(), expected_64_ptr_size)
