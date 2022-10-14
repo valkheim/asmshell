@@ -3,7 +3,7 @@ from typing import Any, Dict
 
 import unicorn
 
-from asmshell import commands, config, registers
+from asmshell import commands, config
 from asmshell.typing import Registers
 
 logger = logging.getLogger(__name__)
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def get_state() -> Dict[Any, Any]:
     state: Dict[str, Registers] = {"registers": {}}
-    for (k, v) in registers.init_registers().items():
+    for (k, v) in config.config.registers.items():
         try:
             state["registers"][k] = config.config.mu.reg_read(v)
         except unicorn.unicorn.UcError:

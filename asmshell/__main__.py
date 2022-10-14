@@ -2,7 +2,7 @@ import argparse
 import logging
 import os
 
-from asmshell import commands, config, init_library_logger, registers, repl
+from asmshell import commands, config, init_library_logger, repl
 
 
 def get_arguments() -> argparse.Namespace:
@@ -48,10 +48,6 @@ def init_commands() -> None:
     ]
 
 
-def init_registers() -> None:
-    config.config.registers = registers.init_registers()
-
-
 def init_repl(quiet: bool) -> None:
     prompt: str = ""
     if not quiet:
@@ -72,7 +68,6 @@ def main() -> None:
     args = get_arguments()
     init_config(args.mode)
     init_commands()
-    init_registers()
     init_repl(args.quiet)
 
 

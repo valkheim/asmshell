@@ -75,12 +75,22 @@ class Config(metaclass=Singleton):
         self.md = capstone.Cs(self.md_arch, self.md_mode)
         self.md.detail = True
 
+    def init_registers(self) -> None:
+        self.registers = {}
+        for name in dir(unicorn.x86_const):
+            if not name.startswith("UC_X86_REG_"):
+                continue
+
+            reg = name[11:].lower()
+            self.registers[reg] = getattr(unicorn.x86_const, name)
+
     def __init__(self, mode: str) -> None:
         self.mode = mode
         self.init_mode()
         self.init_keystone()
         self.init_unicorn()
         self.init_capstone()
+        self.init_registers()
 
 
 config: Config = None  # type: ignore
