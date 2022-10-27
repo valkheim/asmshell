@@ -150,6 +150,11 @@ $ poetry run coverage
 $ firefox htmlcov/index.html &
 ```
 
+# Missing features
+
+* int 0x80
+* obscure features like freep
+
 # Similar projects
 
 * https://github.com/yrp604/rappel/
